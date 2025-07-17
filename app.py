@@ -68,7 +68,7 @@ candidate_cells = candidate_cells.sort_values(by="Cycle life at 1C", ascending=F
 # =====================
 def can_fit(cell, series, parallel):
     # Determine cell orientation dimensions
-    if cell['Cell Shape'] == 'Cylindrical':
+    if cell['Shape'] == 'Cylindrical':
         d = cell['Diameter (mm)']
         h = cell['Height (mm)']
         volume_configurations = [
