@@ -177,7 +177,9 @@ pack_specs = {}
 
 for _, cell in candidate_cells.iterrows():
     # Ensure nominal voltage and cell capacity are numeric
-    nominal_voltage = pd.to_numeric(cell['Nominal Voltage (V)'], errors='coerce').fillna(0)
+    nominal_voltage = pd.to_numeric(cell['Nominal Voltage (V)'], errors='coerce')
+    nominal_voltage = 0 if pd.isna(nominal_voltage) else nominal_voltage
+
     cell_capacity = pd.to_numeric(cell['Cell Capacity (Ah)'], errors='coerce').fillna(0)
 
     cell_wh = nominal_voltage * cell_capacity / 1000
