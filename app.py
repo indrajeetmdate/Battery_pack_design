@@ -66,7 +66,7 @@ candidate_cells = candidate_cells.sort_values(by="Cycle life at 1C", ascending=F
 # Packing Function
 # =====================
 def can_fit(cell, series, parallel):
-    if cell['Cell shape'] == 'Cylindrical':
+    if cell['Shape'] == 'Cylindrical':
         d = cell['Diameter (mm)']
         h = cell['Height (mm)']
         volume_configurations = [
