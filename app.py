@@ -132,9 +132,15 @@ candidate_cells = candidate_cells.sort_values(by="Cycle life at 1C", ascending=F
 def can_fit(cell, series, parallel, usable_l, usable_b, usable_h):
     # Ensure all dimensions are numeric, coercing errors to NaN and filling with a default (e.g., 0)
     # This prevents potential TypeError if a dimension column contains non-numeric data
-    cell_diameter_length = pd.to_numeric(cell['Cell Diameter/Cell Length (mm)'], errors='coerce').fillna(0)
-    cell_height = pd.to_numeric(cell['Cell height (mm)'], errors='coerce').fillna(0)
-    third_dimension = pd.to_numeric(cell['Third dimension (mm)'], errors='coerce').fillna(0)
+    cell_diameter_length = pd.to_numeric(cell['Cell Diameter/Cell Length (mm)'], errors='coerce')
+    cell_diameter_length = 0 if pd.isna(cell_diameter_length) else cell_diameter_length
+
+
+    cell_height = pd.to_numeric(cell['Cell height (mm)'], errors='coerce')
+    cell_height = 0 if pd.isna(cell_height) else cell_height
+
+    third_dimension = pd.to_numeric(cell['Third dimension (mm)'], errors='coerce')
+    third_dimension = 0 if pd.isna(third_dimension) else third_dimension
 
 
     if cell['Shape'] == 'Cylindrical':
