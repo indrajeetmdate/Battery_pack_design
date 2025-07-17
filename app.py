@@ -7,7 +7,7 @@ import numpy as np
 # =====================
 @st.cache_data
 def load_data():
-    file_path = "Pack_calculations.xlsx - Pack_optimisation.csv"
+    file_path = "Pack_calculations.csv"
     # Define common encodings and separators to try
     possible_encodings = ['utf-8', 'latin1', 'iso-8859-1', 'cp1252']
     possible_seps = [',', ';', '\t'] # Comma, Semicolon, Tab
