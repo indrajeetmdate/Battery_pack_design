@@ -98,7 +98,7 @@ fit_dims = None
 pack_specs = {}
 
 for _, cell in candidate_cells.iterrows():
-    cell_wh = cell['Nominal Voltage (V)'] * cell['Capacity(Ah)'] / 1000  # in kWh
+    cell_wh = cell['Nominal Voltage (V)'] * cell['Cell Capacity (Ah)'] / 1000  # in kWh
     parallel = int(np.ceil(energy_required_kwh / cell_wh))
     series = int(np.ceil(expected_voltage / cell['Nominal Voltage (V)']))
     total_cells = series * parallel
@@ -115,11 +115,11 @@ if best_cell is not None:
     pack_specs = {
         "Required Energy (kWh)": round(energy_required_kwh, 2),
         "Cell Voltage (V)": best_cell['Nominal Voltage (V)'],
-        "Cell Capacity (Ah)": best_cell['Capacity(Ah)'],
+        "Cell Capacity (Ah)": best_cell['Cell Capacity (Ah)'],
         "Series (#)": series,
         "Parallel (#)": parallel,
         "Total Cells": total_cells,
-        "Pack Capacity (Ah)": round(parallel * best_cell['Capacity(Ah)'], 2),
+        "Pack Capacity (Ah)": round(parallel * best_cell['Cell Capacity (Ah)'], 2),
         "Pack Voltage (V)": round(series * best_cell['Nominal Voltage (V)'], 2),
         "Pack Volume (mm)": f"{int(fit_dims[0])} x {int(fit_dims[1])} x {int(fit_dims[2])}",
         "Pack Energy Density (Wh/kg)": round(best_cell['Wh/kg (Pack)'], 2),
@@ -137,6 +137,6 @@ else:
 # =====================
 with st.expander("See Available Cells Considered"):
     st.dataframe(candidate_cells[[
-        'Cell Name', 'Chemistry', 'Nominal Voltage (V)', 'Capacity(Ah)',
+        'Cell Name', 'Chemistry', 'Nominal Voltage (V)', 'Cell Capacity(Ah)',
         'Cycle life at 1C', 'Wh/kg (Pack)'
     ]])
