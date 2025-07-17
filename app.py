@@ -82,11 +82,11 @@ cell_type_input = st.sidebar.text_input("Choose Cell Type (Optional)", help="Lea
 
 if application_type == "EV":
     km_expected = st.sidebar.number_input("Km Expected per Charge", min_value=1)
-    energy_required_kwh = (expected_voltage * km_expected * 0.15) / 1000
+    energy_required_kwh = (km_expected * 33) / 1000
 else:
     hours_backup = st.sidebar.number_input("Backup Hours Required", min_value=1.0)
-    total_kw_load = st.sidebar.number_input("Total Load (kW)", min_value=0.1)
-    energy_required_kwh = hours_backup * total_kw_load
+    total_watt_load = st.sidebar.number_input("Total Load (W)", min_value=0.1)
+    energy_required_kwh = (hours_backup * total_watt_load) / 1000
 
 st.sidebar.header("Space Constraints (mm)")
 avail_l = st.sidebar.number_input("Length Available", min_value=100)
@@ -96,7 +96,7 @@ avail_h = st.sidebar.number_input("Height Available", min_value=100)
 # =====================
 # Derived Calculations
 # =====================
-tolerance = 15  # mm on each side for packing and connections
+tolerance = 5  # mm on each side for packing and connections
 usable_l = avail_l - 2 * tolerance
 usable_b = avail_b - 2 * tolerance
 usable_h = avail_h - 2 * tolerance
@@ -193,7 +193,7 @@ for _, cell in candidate_cells.iterrows():
     if cell_wh <= 0: # Ensure cell has positive energy capacity
         continue
 
-    parallel = int(np.ceil(energy_required_kwh/ cell_wh*1000))
+    parallel = int(np.ceil(energy_required_kwh/(expected_voltage*cell_capacity)))
     series = int(np.ceil(expected_voltage / nominal_voltage))
 
     if parallel <= 0: parallel = 1
