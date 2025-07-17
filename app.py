@@ -146,8 +146,8 @@ def can_fit(cell, series, parallel, usable_l, usable_b, usable_h):
 
 
     if cell['Shape'] == 'Cylindrical':
-        d = cell_diameter_length
-        h = cell_height
+        d = float(cell_diameter_length)
+        h = float(cell_height)
         volume_configurations = [
             (d * series, d * math.sqrt(parallel), h * math.sqrt(parallel)),
             (d * math.sqrt(parallel), d * series, h * math.sqrt(parallel)),
@@ -157,9 +157,9 @@ def can_fit(cell, series, parallel, usable_l, usable_b, usable_h):
             (h * math.sqrt(parallel), d * math.sqrt(parallel), d * series),
         ]
     else:  # Prismatic
-        l = cell_diameter_length
-        b = third_dimension
-        h = cell_height
+        l = float(cell_diameter_length)
+        b = float(third_dimension)
+        h = float(cell_height)
         volume_configurations = [
             (l * series, b * math.sqrt(parallel), h * math.sqrt(parallel)),
             (l * series, h * math.sqrt(parallel), b * math.sqrt(parallel)),
@@ -173,7 +173,6 @@ def can_fit(cell, series, parallel, usable_l, usable_b, usable_h):
             (l * math.sqrt(parallel), h * math.sqrt(parallel), b * series),
             (h * math.sqrt(parallel), b * series, l * math.sqrt(parallel)),
             (h * math.sqrt(parallel), l * math.sqrt(parallel), b * series),
-
             (h * series, b * math.sqrt(parallel), l * math.sqrt(parallel)),
             (h * series, l * math.sqrt(parallel), b * math.sqrt(parallel)),
             (b * math.sqrt(parallel), h * series, l * math.sqrt(parallel)),
