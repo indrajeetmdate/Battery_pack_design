@@ -8,7 +8,6 @@ import numpy as np
 @st.cache_data
 def load_data():
     df = pd.read_excel("Pack_calculations.xlsx")
-    df.columns = df.columns.str.strip()  # Remove leading/trailing whitespace from all column names
     return df
 
 df = load_data()
@@ -45,7 +44,7 @@ usable_b = avail_b - 2 * tolerance
 usable_h = avail_h - 2 * tolerance
 
 if application_type == "EV":
-    energy_required_kwh = (expected_voltage * km_expected * 0.15) / 1000  # Simple assumption: 150 Wh/km
+    energy_required_kwh = (expected_voltage * km_expected * 0.15) / 1000  # Assume 150 Wh/km
 else:
     energy_required_kwh = hours_backup * total_kw_load
 
@@ -60,33 +59,31 @@ else:
     if cell_chemistry != "Any":
         candidate_cells = candidate_cells[candidate_cells['Chemistry'] == cell_chemistry]
 
-# Prioritize higher cycle life
+# Prioritize cells by highest cycle life
 candidate_cells = candidate_cells.sort_values(by="Cycle life at 1C", ascending=False)
 
 # =====================
 # Packing Function
 # =====================
 def can_fit(cell, series, parallel):
-    # Determine cell orientation dimensions
-    if cell['Shape'] == 'Cylindrical':
+    if cell['Cell Shape'] == 'Cylindrical':
         d = cell['Diameter (mm)']
         h = cell['Height (mm)']
         volume_configurations = [
-            (d * series, d * parallel, h),  # L x B x H
+            (d * series, d * parallel, h),
             (d * parallel, d * series, h),
             (h, d * series, d * parallel),
             (d * series, h, d * parallel),
         ]
     else:  # Prismatic
         l = cell['Length (mm)']
-        b = cell['Breadth (mm)']
+        b = cell['Third dimension (mm)']  # Breadth
         h = cell['Height (mm)']
         volume_configurations = [
             (l * series, b * parallel, h),
             (b * parallel, l * series, h),
             (h, l * series, b * parallel),
         ]
-
     for config in volume_configurations:
         if all([config[0] <= usable_l, config[1] <= usable_b, config[2] <= usable_h]):
             return config
@@ -100,15 +97,19 @@ fit_dims = None
 pack_specs = {}
 
 for _, cell in candidate_cells.iterrows():
-    cell_wh = cell['Nominal Voltage (V)'] * cell['Cell Capacity (Ah)'] / 1000  # in kWh
-    parallel = int(np.ceil(energy_required_kwh / cell_wh))
-    series = int(np.ceil(expected_voltage / cell['Nominal Voltage (V)']))
-    total_cells = series * parallel
+    try:
+        cell_wh = cell['Nominal Voltage (V)'] * cell['Capacity (Ah)'] / 1000  # in kWh
+        parallel = int(np.ceil(energy_required_kwh / cell_wh))
+        series = int(np.ceil(expected_voltage / cell['Nominal Voltage (V)']))
+        total_cells = series * parallel
 
-    fit = can_fit(cell, series, parallel)
-    if fit:
-        best_cell = cell
-        fit_dims = fit
+        fit = can_fit(cell, series, parallel)
+        if fit:
+            best_cell = cell
+            fit_dims = fit
+            break
+    except KeyError as e:
+        st.error(f"Missing expected column: {e}")
         break
 
 if best_cell is not None:
