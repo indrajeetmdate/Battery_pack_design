@@ -123,8 +123,7 @@ if candidate_cells.empty:
     st.stop()
 
 # Ensure 'Cycle life at 1C' is numeric before sorting
-candidate_cells['Cycle life at 1C'] = pd.to_numeric(candidate_cells['Cycle life at 1C'], errors='coerce')
-candidate_cell = 0 if pd.isna(candidate_cell) else candidate_cell
+candidate_cells['Cycle life at 1C'] = pd.to_numeric(candidate_cells['Cycle life at 1C'], errors='coerce').fillna(0)
 
 candidate_cells = candidate_cells.sort_values(by="Cycle life at 1C", ascending=False)
 
