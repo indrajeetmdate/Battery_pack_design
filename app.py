@@ -179,9 +179,8 @@ for _, cell in candidate_cells.iterrows():
     # Ensure nominal voltage and cell capacity are numeric
     nominal_voltage = pd.to_numeric(cell['Nominal Voltage (V)'], errors='coerce')
     nominal_voltage = 0 if pd.isna(nominal_voltage) else nominal_voltage
-
-    cell_capacity = pd.to_numeric(cell['Cell Capacity (Ah)'], errors='coerce').fillna(0)
-
+    cell_capacity = pd.to_numeric(cell['Cell Capacity (Ah)'], errors='coerce')
+    cell_capacity = 0 if pd.isna(cell_capacity) else cell_capacity
     cell_wh = nominal_voltage * cell_capacity / 1000
 
     if cell_wh <= 0: # Ensure cell has positive energy capacity
