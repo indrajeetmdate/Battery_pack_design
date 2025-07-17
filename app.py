@@ -100,7 +100,7 @@ fit_dims = None
 pack_specs = {}
 
 for _, cell in candidate_cells.iterrows():
-    cell_wh = cell['Nominal Voltage (V)'] * cell['Capacity (Ah)'] / 1000  # in kWh
+    cell_wh = cell['Nominal Voltage (V)'] * cell['Cell Capacity (Ah)'] / 1000  # in kWh
     parallel = int(np.ceil(energy_required_kwh / cell_wh))
     series = int(np.ceil(expected_voltage / cell['Nominal Voltage (V)']))
     total_cells = series * parallel
