@@ -7,16 +7,15 @@ import numpy as np
 # =====================
 @st.cache_data
 def load_data():
-    # Corrected: Removed explicit delimiter=',' to let pandas infer,
-    # as ParserError can occur with inconsistent delimiters.
-    # Kept encoding and python engine for robustness.
+    # Corrected: Changed 'delimiter' to 'sep' and added 'skipinitialspace=True'
+    # to handle potential inconsistencies or extra spaces in the CSV.
     try:
-        df = pd.read_csv("Pack_calculations.xlsx - Pack_optimisation.csv", encoding='utf-8', engine='python')
+        df = pd.read_csv("Pack_calculations.xlsx - Pack_optimisation.csv", encoding='utf-8', sep=',', engine='python', skipinitialspace=True)
     except UnicodeDecodeError:
         # Fallback to 'latin1' if 'utf-8' fails
-        df = pd.read_csv("Pack_calculations.xlsx - Pack_optimisation.csv", encoding='latin1', engine='python')
+        df = pd.read_csv("Pack_calculations.xlsx - Pack_optimisation.csv", encoding='latin1', sep=',', engine='python', skipinitialspace=True)
     except pd.errors.ParserError as e:
-        st.error(f"Error parsing CSV file: {e}. Please ensure the file is correctly formatted and consistent (e.g., same number of columns per row).")
+        st.error(f"Error parsing CSV file: {e}. This often means the file has inconsistent rows (e.g., different number of columns). Please check your CSV file for formatting issues.")
         st.stop() # Stop the app if parsing fails
     return df
 
