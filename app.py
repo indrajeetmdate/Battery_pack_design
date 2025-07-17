@@ -123,7 +123,9 @@ if candidate_cells.empty:
     st.stop()
 
 # Ensure 'Cycle life at 1C' is numeric before sorting
-candidate_cells['Cycle life at 1C'] = pd.to_numeric(candidate_cells['Cycle life at 1C'], errors='coerce').fillna(0)
+candidate_cells['Cycle life at 1C'] = pd.to_numeric(candidate_cells['Cycle life at 1C'], errors='coerce')
+candidate_cell = 0 if pd.isna(candidate_cell) else candidate_cell
+
 candidate_cells = candidate_cells.sort_values(by="Cycle life at 1C", ascending=False)
 
 # =====================
@@ -210,10 +212,17 @@ if best_cell is not None:
     st.success(f"Selected Cell: {best_cell['Cell Name']} ({best_cell['Chemistry']})")
 
     # Ensure all values used in pack_specs are numeric before rounding/displaying
-    best_cell_nominal_voltage = pd.to_numeric(best_cell['Nominal Voltage (V)'], errors='coerce').fillna(0)
-    best_cell_capacity = pd.to_numeric(best_cell['Cell Capacity (Ah)'], errors='coerce').fillna(0)
-    best_cell_wh_per_kg_pack = pd.to_numeric(best_cell['Wh/kg (pack) (cells + 30%)'], errors='coerce').fillna(0)
-    best_cell_cycle_life = pd.to_numeric(best_cell['Cycle life at 1C'], errors='coerce').fillna(0)
+    best_cell_nominal_voltage = pd.to_numeric(best_cell['Nominal Voltage (V)'], errors='coerce')
+    best_cell_nominal_voltage = 0 if pd.isna(best_cell_nominal_voltage) else best_cell_nominal_voltage
+    
+    best_cell_capacity = pd.to_numeric(best_cell['Cell Capacity (Ah)'], errors='coerce')
+    best_cell_capacity = 0 if pd.isna(best_cell_capacity) else best_cell_capacity
+    
+    best_cell_wh_per_kg_pack = pd.to_numeric(best_cell['Wh/kg (pack) (cells + 30%)'], errors='coerce')
+    best_cell_wh_per_kg_pack = 0 if pd.isna(best_cell_wh_per_kg_pack) else best_cell_wh_per_kg_pack
+    
+    best_cell_cycle_life = pd.to_numeric(best_cell['Cycle life at 1C'], errors='coerce')
+    best_cell_cycle_life = 0 if pd.isna(best_cell_cycle_life) else best_cell_cycle_life
 
 
     pack_specs = {
