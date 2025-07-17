@@ -67,8 +67,8 @@ candidate_cells = candidate_cells.sort_values(by="Cycle life at 1C", ascending=F
 # =====================
 def can_fit(cell, series, parallel):
     if cell['Shape'] == 'Cylindrical':
-        d = cell['Diameter (mm)']
-        h = cell['Height (mm)']
+        d = cell['Cell Diameter/Cell Length (mm)']
+        h = cell['Cell height (mm)']
         volume_configurations = [
             (d * series, d * parallel, h),
             (d * parallel, d * series, h),
@@ -76,9 +76,9 @@ def can_fit(cell, series, parallel):
             (d * series, h, d * parallel),
         ]
     else:  # Prismatic
-        l = cell['Length (mm)']
+        l = cell['Cell Diameter/Cell Length (mm)']
         b = cell['Third dimension (mm)']  # For prismatic, this is breadth
-        h = cell['Height (mm)']
+        h = cell['Cell height (mm)']
         volume_configurations = [
             (l * series, b * parallel, h),
             (b * parallel, l * series, h),
