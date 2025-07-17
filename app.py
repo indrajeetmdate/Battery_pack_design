@@ -193,7 +193,7 @@ for _, cell in candidate_cells.iterrows():
     if cell_wh <= 0: # Ensure cell has positive energy capacity
         continue
 
-    parallel = int(np.ceil(energy_required_kwh/(expected_voltage*cell_capacity)))
+    parallel = int(np.ceil(energy_required_kwh*1000/(expected_voltage*cell_capacity)))
     series = int(np.ceil(expected_voltage / nominal_voltage))
 
     if parallel <= 0: parallel = 1
