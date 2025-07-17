@@ -60,7 +60,7 @@ else:
         candidate_cells = candidate_cells[candidate_cells['Chemistry'] == cell_chemistry]
 
 # Prioritize higher cycle life
-candidate_cells = candidate_cells.sort_values(by="Cycle Life (1C)", ascending=False)
+candidate_cells = candidate_cells.sort_values(by="Cycle life at 1C", ascending=False)
 
 # =====================
 # Packing Function
@@ -123,7 +123,7 @@ if best_cell is not None:
         "Pack Voltage (V)": round(series * best_cell['Nominal Voltage (V)'], 2),
         "Pack Volume (mm)": f"{int(fit_dims[0])} x {int(fit_dims[1])} x {int(fit_dims[2])}",
         "Pack Energy Density (Wh/kg)": round(best_cell['Wh/kg (Pack)'], 2),
-        "Cycle Life": int(best_cell['Cycle Life (1C)'])
+        "Cycle Life": int(best_cell['Cycle life at 1C'])
     }
 
     st.subheader("Battery Pack Specifications")
@@ -138,5 +138,5 @@ else:
 with st.expander("See Available Cells Considered"):
     st.dataframe(candidate_cells[[
         'Cell Name', 'Chemistry', 'Nominal Voltage (V)', 'Capacity(Ah)',
-        'Cycle Life (1C)', 'Wh/kg (Pack)'
+        'Cycle life at 1C', 'Wh/kg (Pack)'
     ]])
