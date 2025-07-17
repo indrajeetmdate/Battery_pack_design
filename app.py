@@ -44,7 +44,7 @@ usable_b = avail_b - 2 * tolerance
 usable_h = avail_h - 2 * tolerance
 
 if application_type == "EV":
-    energy_required_kwh = (expected_voltage * km_expected * 0.15) / 1000  # Assume 150 Wh/km
+    energy_required_kwh = (expected_voltage * km_expected * 0.15) / 1000  # Simple assumption: 150 Wh/km
 else:
     energy_required_kwh = hours_backup * total_kw_load
 
@@ -59,8 +59,8 @@ else:
     if cell_chemistry != "Any":
         candidate_cells = candidate_cells[candidate_cells['Chemistry'] == cell_chemistry]
 
-# Prioritize cells by highest cycle life
-candidate_cells = candidate_cells.sort_values(by="Cycle life at 1C", ascending=False)
+# Prioritize higher cycle life
+candidate_cells = candidate_cells.sort_values(by="Cycle life (1C)", ascending=False)
 
 # =====================
 # Packing Function
@@ -77,13 +77,14 @@ def can_fit(cell, series, parallel):
         ]
     else:  # Prismatic
         l = cell['Length (mm)']
-        b = cell['Third dimension (mm)']  # Breadth
+        b = cell['Third dimension (mm)']  # For prismatic, this is breadth
         h = cell['Height (mm)']
         volume_configurations = [
             (l * series, b * parallel, h),
             (b * parallel, l * series, h),
             (h, l * series, b * parallel),
         ]
+
     for config in volume_configurations:
         if all([config[0] <= usable_l, config[1] <= usable_b, config[2] <= usable_h]):
             return config
@@ -97,19 +98,15 @@ fit_dims = None
 pack_specs = {}
 
 for _, cell in candidate_cells.iterrows():
-    try:
-        cell_wh = cell['Nominal Voltage (V)'] * cell['Capacity (Ah)'] / 1000  # in kWh
-        parallel = int(np.ceil(energy_required_kwh / cell_wh))
-        series = int(np.ceil(expected_voltage / cell['Nominal Voltage (V)']))
-        total_cells = series * parallel
+    cell_wh = cell['Nominal Voltage (V)'] * cell['Capacity(Ah)'] / 1000  # in kWh
+    parallel = int(np.ceil(energy_required_kwh / cell_wh))
+    series = int(np.ceil(expected_voltage / cell['Nominal Voltage (V)']))
+    total_cells = series * parallel
 
-        fit = can_fit(cell, series, parallel)
-        if fit:
-            best_cell = cell
-            fit_dims = fit
-            break
-    except KeyError as e:
-        st.error(f"Missing expected column: {e}")
+    fit = can_fit(cell, series, parallel)
+    if fit:
+        best_cell = cell
+        fit_dims = fit
         break
 
 if best_cell is not None:
@@ -118,15 +115,15 @@ if best_cell is not None:
     pack_specs = {
         "Required Energy (kWh)": round(energy_required_kwh, 2),
         "Cell Voltage (V)": best_cell['Nominal Voltage (V)'],
-        "Cell Capacity (Ah)": best_cell['Capacity (Ah)'],
+        "Cell Capacity (Ah)": best_cell['Capacity(Ah)'],
         "Series (#)": series,
         "Parallel (#)": parallel,
         "Total Cells": total_cells,
-        "Pack Capacity (Ah)": round(parallel * best_cell['Capacity (Ah)'], 2),
+        "Pack Capacity (Ah)": round(parallel * best_cell['Capacity(Ah)'], 2),
         "Pack Voltage (V)": round(series * best_cell['Nominal Voltage (V)'], 2),
         "Pack Volume (mm)": f"{int(fit_dims[0])} x {int(fit_dims[1])} x {int(fit_dims[2])}",
-        "Pack Energy Density (Wh/kg)": round(best_cell['Wh/kg (pack) (cells + 30%)'], 2),
-        "Cycle Life": int(best_cell['Cycle life at 1C'])
+        "Pack Energy Density (Wh/kg)": round(best_cell['Wh/kg (Pack)'], 2),
+        "Cycle Life": int(best_cell['Cycle life (1C)'])
     }
 
     st.subheader("Battery Pack Specifications")
@@ -139,4 +136,7 @@ else:
 # Raw Data Option
 # =====================
 with st.expander("See Available Cells Considered"):
-    st.dataframe(candidate_cells[['Cell Name', 'Chemistry', 'Nominal Voltage (V)', 'Capacity (Ah)', 'Cycle life at 1C', 'Wh/kg (pack) (cells + 30%)']])
+    st.dataframe(candidate_cells[[
+        'Cell Name', 'Chemistry', 'Nominal Voltage (V)', 'Capacity(Ah)',
+        'Cycle life (1C)', 'Wh/kg (Pack)'
+    ]])
