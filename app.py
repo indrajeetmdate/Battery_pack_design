@@ -137,6 +137,6 @@ else:
 # =====================
 with st.expander("See Available Cells Considered"):
     st.dataframe(candidate_cells[[
-        'Cell Name', 'Chemistry', 'Nominal Voltage (V)', 'Cell Capacity(Ah)',
+        'Cell Name', 'Chemistry', 'Nominal Voltage (V)', 'Cell Capacity (Ah)',
         'Cycle life at 1C', 'Wh/kg (Pack)'
     ]])
