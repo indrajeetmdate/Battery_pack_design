@@ -60,7 +60,7 @@ else:
         candidate_cells = candidate_cells[candidate_cells['Chemistry'] == cell_chemistry]
 
 # Prioritize higher cycle life
-candidate_cells = candidate_cells.sort_values(by="Cycle life (1C)", ascending=False)
+candidate_cells = candidate_cells.sort_values(by="Cycle life at 1C", ascending=False)
 
 # =====================
 # Packing Function
