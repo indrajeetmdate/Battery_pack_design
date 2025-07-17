@@ -148,24 +148,37 @@ def can_fit(cell, series, parallel, usable_l, usable_b, usable_h):
         d = cell_diameter_length
         h = cell_height
         volume_configurations = [
-            (d * series, d * parallel, h),
-            (d * parallel, d * series, h),
-            (h, d * series, d * parallel),
-            (d * series, h, d * parallel),
-            (d * parallel, h, d * series),
-            (h, d * parallel, d * series),
+            (d * series, d * math.sqrt(parallel), h * math.sqrt(parallel)),
+            (d * math.sqrt(parallel), d * series, h * math.sqrt(parallel)),
+            (h * math.sqrt(parallel), d * series, d * math.sqrt(parallel)),
+            (d * series, h, d * math.sqrt(parallel)),
+            (d * math.sqrt(parallel), h * math.sqrt(parallel), d * series),
+            (h * math.sqrt(parallel), d * math.sqrt(parallel), d * series),
         ]
     else:  # Prismatic
         l = cell_diameter_length
         b = third_dimension
         h = cell_height
         volume_configurations = [
-            (l * series, b * parallel, h),
-            (l * series, h, b * parallel),
-            (b * parallel, l * series, h),
-            (b * parallel, h, l * series),
-            (h, l * series, b * parallel),
-            (h, b * parallel, l * series),
+            (l * series, b * math.sqrt(parallel), h * math.sqrt(parallel)),
+            (l * series, h * math.sqrt(parallel), b * math.sqrt(parallel)),
+            (b * math.sqrt(parallel), l * series, h * math.sqrt(parallel)),
+            (b * math.sqrt(parallel), h * math.sqrt(parallel), l * series),
+            (h * math.sqrt(parallel), l * series, b * math.sqrt(parallel)),
+            (h * math.sqrt(parallel), b * math.sqrt(parallel), l * series),
+            (b * series, l * math.sqrt(parallel), h * math.sqrt(parallel)),
+            (b * series, h * math.sqrt(parallel), l * math.sqrt(parallel)),
+            (l * math.sqrt(parallel), b * series, h * math.sqrt(parallel)),
+            (l * math.sqrt(parallel), h * math.sqrt(parallel), b * series),
+            (h * math.sqrt(parallel), b * series, l * math.sqrt(parallel)),
+            (h * math.sqrt(parallel), l * math.sqrt(parallel), b * series),
+
+            (h * series, b * math.sqrt(parallel), l * math.sqrt(parallel)),
+            (h * series, l * math.sqrt(parallel), b * math.sqrt(parallel)),
+            (b * math.sqrt(parallel), h * series, l * math.sqrt(parallel)),
+            (b * math.sqrt(parallel), l * math.sqrt(parallel), h * series),
+            (l * math.sqrt(parallel), h * series, b * math.sqrt(parallel)),
+            (l * math.sqrt(parallel), b * math.sqrt(parallel), h * series),
         ]
 
     for config in volume_configurations:
