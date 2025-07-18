@@ -145,20 +145,20 @@ def can_fit(cell, series, parallel, usable_l, usable_b, usable_h):
     third_dimension = 0 if pd.isna(third_dimension) else third_dimension
 
     if cell['Shape'] == 'Cylindrical':
-    d = float(cell_diameter_length)
-    h = float(cell_height)
-
-    rows = math.ceil(math.sqrt(parallel))
-    cols = math.ceil(parallel / rows)
-
-    volume_configurations = [
-        (d * series, d * cols, h * rows),
-        (d * series, h * rows, d * cols),
-        (h * rows, d * series, d * cols),
-        (d * cols, h * rows, d * series),
-        (h * rows, d * cols, d * series),
-        (d * cols, d * series, h * rows),
-    ]
+        d = float(cell_diameter_length)
+        h = float(cell_height)
+    
+        rows = math.ceil(math.sqrt(parallel))
+        cols = math.ceil(parallel / rows)
+    
+        volume_configurations = [
+            (d * series, d * cols, h * rows),
+            (d * series, h * rows, d * cols),
+            (h * rows, d * series, d * cols),
+            (d * cols, h * rows, d * series),
+            (h * rows, d * cols, d * series),
+            (d * cols, d * series, h * rows),
+        ]
     else:  # Prismatic
         l = float(cell_diameter_length)  # Length
         b = float(third_dimension)       # Breadth
