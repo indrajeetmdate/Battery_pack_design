@@ -144,49 +144,47 @@ def can_fit(cell, series, parallel, usable_l, usable_b, usable_h):
     third_dimension = pd.to_numeric(cell['Third dimension (mm)'], errors='coerce')
     third_dimension = 0 if pd.isna(third_dimension) else third_dimension
 
-
     if cell['Shape'] == 'Cylindrical':
-        d = float(cell_diameter_length)
-        h = float(cell_height)
-        volume_configurations = [
-            (d * series, d * math.sqrt(parallel), h * math.sqrt(parallel)),
-            (d * math.sqrt(parallel), d * series, h * math.sqrt(parallel)),
-            (h * math.sqrt(parallel), d * series, d * math.sqrt(parallel)),
-            (d * series, h, d * math.sqrt(parallel)),
-            (d * math.sqrt(parallel), h * math.sqrt(parallel), d * series),
-            (h * math.sqrt(parallel), d * math.sqrt(parallel), d * series),
-        ]
-    else:  # Prismatic
-        l = float(cell_diameter_length)
-        b = float(third_dimension)
-        h = float(cell_height)
-        volume_configurations = [
-            (l * series, b * math.sqrt(parallel), h * math.sqrt(parallel)),
-            (l * series, h * math.sqrt(parallel), b * math.sqrt(parallel)),
-            (b * math.sqrt(parallel), l * series, h * math.sqrt(parallel)),
-            (b * math.sqrt(parallel), h * math.sqrt(parallel), l * series),
-            (h * math.sqrt(parallel), l * series, b * math.sqrt(parallel)),
-            (h * math.sqrt(parallel), b * math.sqrt(parallel), l * series),
-            (b * series, l * math.sqrt(parallel), h * math.sqrt(parallel)),
-            (b * series, h * math.sqrt(parallel), l * math.sqrt(parallel)),
-            (l * math.sqrt(parallel), b * series, h * math.sqrt(parallel)),
-            (l * math.sqrt(parallel), h * math.sqrt(parallel), b * series),
-            (h * math.sqrt(parallel), b * series, l * math.sqrt(parallel)),
-            (h * math.sqrt(parallel), l * math.sqrt(parallel), b * series),
-            (h * series, b * math.sqrt(parallel), l * math.sqrt(parallel)),
-            (h * series, l * math.sqrt(parallel), b * math.sqrt(parallel)),
-            (b * math.sqrt(parallel), h * series, l * math.sqrt(parallel)),
-            (b * math.sqrt(parallel), l * math.sqrt(parallel), h * series),
-            (l * math.sqrt(parallel), h * series, b * math.sqrt(parallel)),
-            (l * math.sqrt(parallel), b * math.sqrt(parallel), h * series),
-        ]
+    d = float(cell_diameter_length)
+    h = float(cell_height)
 
+    rows = math.ceil(math.sqrt(parallel))
+    cols = math.ceil(parallel / rows)
+
+    volume_configurations = [
+        (d * series, d * cols, h * rows),
+        (d * series, h * rows, d * cols),
+        (h * rows, d * series, d * cols),
+        (d * cols, h * rows, d * series),
+        (h * rows, d * cols, d * series),
+        (d * cols, d * series, h * rows),
+    ]
+    else:  # Prismatic
+        l = float(cell_diameter_length)  # Length
+        b = float(third_dimension)       # Breadth
+        h = float(cell_height)
+    
+        rows = math.ceil(math.sqrt(parallel))
+        cols = math.ceil(parallel / rows)
+    
+        volume_configurations = [
+            (l * series, b * cols, h * rows),
+            (l * series, h * rows, b * cols),
+            (b * cols, l * series, h * rows),
+            (b * cols, h * rows, l * series),
+            (h * rows, l * series, b * cols),
+            (h * rows, b * cols, l * series),
+        ]
+    
     for config in volume_configurations:
         if (config[0] <= usable_l and
             config[1] <= usable_b and
             config[2] <= usable_h):
             return config
     return None
+    
+        
+
 
 # =====================
 # Selection Logic
