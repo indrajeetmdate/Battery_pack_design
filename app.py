@@ -161,6 +161,8 @@ def can_fit(cell, series, parallel, usable_l, usable_b, usable_h):
             (d * rows, d * cols, h * series),
             (d * cols, h * series, d * rows),
             (h * series, d * rows, d * cols),
+            (h * cols, d * series, d * rows),
+            (d * series, d * rows, h * cols),
         ]
     else:  # Prismatic
         l = float(cell_diameter_length)  # Length
